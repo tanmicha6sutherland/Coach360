@@ -269,8 +269,8 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ userName, onReset 
                 <p className="font-bold text-red-800">Deployment Steps (Must do!):</p>
                 <ul className="list-disc list-inside space-y-1 ml-1">
                   <li><strong>Environment Variable Name:</strong> Ensure your environment variable is named <code>API_KEY</code>.</li>
-                  <li><strong>Build Command:</strong> Ensure Netlify is running <code>npm run build</code> and the publish directory is <code>dist</code>. (This happens automatically with the provided package.json).</li>
-                  <li><strong>Trigger Re-deploy:</strong> After changing environment variables, you must go to "Deploys" and "Trigger Deploy" -> "Deploy Site" for changes to take effect.</li>
+                  <li><strong>Dependencies Updated:</strong> We have updated the package file to resolve the "No matching version" error. Netlify should now build correctly.</li>
+                  <li><strong>Trigger Re-deploy:</strong> You must trigger a new deploy in Netlify for these changes to take effect.</li>
                 </ul>
               </div>
             </details>
