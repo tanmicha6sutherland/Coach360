@@ -25,11 +25,18 @@ You are warm, sincere, curious, and supportive. You are NOT a cold logic machine
 Help ${userName} realize the solution and commit to concrete actions.
 `;
 
+// This grabs the key you saved in your Netlify Environment Variables
+const API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
+
 let chatSession: Chat | null = null;
 
 export const initializeChat = (userName: string): void => {
-  // Use process.env.API_KEY directly as per @google/genai guidelines.
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+  // Check if the key is missing to help with troubleshooting
+  if (!API_KEY) {
+    console.error("API Key is missing! Check your Netlify Environment Variables.");
+  }
+
+  const ai = new GoogleGenAI({ apiKey: API_KEY });
   
   chatSession = ai.chats.create({
     model: 'gemini-3-flash-preview',
@@ -55,9 +62,8 @@ export const sendMessageToGemini = async (text: string): Promise<string> => {
 };
 
 export const generateCoachingSummary = async (messages: Message[]): Promise<string> => {
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+  const ai = new GoogleGenAI({ apiKey: API_KEY });
   
-  // Convert chat history to a simple string
   const conversationText = messages
     .map(m => `${m.role.toUpperCase()}: ${m.text}`)
     .join('\n');
