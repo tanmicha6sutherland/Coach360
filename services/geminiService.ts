@@ -1,4 +1,4 @@
-import { GoogleGenAI, Chat } from "@google/genai";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 import { Message } from "../types";
 
 const SYSTEM_INSTRUCTION = (userName: string) => `
@@ -25,8 +25,9 @@ You are warm, sincere, curious, and supportive. You are NOT a cold logic machine
 Help ${userName} realize the solution and commit to concrete actions.
 `;
 
-// This grabs the key you saved in your Netlify Environment Variables
 const API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
+
+// Log to see if the key is actually reaching the app
 console.log("Checking API Key...");
 if (!API_KEY) {
   console.error("DEBUG: The VITE_GEMINI_API_KEY is currently UNDEFINED.");
@@ -34,21 +35,18 @@ if (!API_KEY) {
   console.log("DEBUG: API Key was found and loaded.");
 }
 
-let chatSession: Chat | null = null;
+const genAI = new GoogleGenerativeAI(API_KEY || "");
+let chatSession: any = null;
 
 export const initializeChat = (userName: string): void => {
-  // Check if the key is missing to help with troubleshooting
-  if (!API_KEY) {
-    console.error("API Key is missing! Check your Netlify Environment Variables.");
-  }
-
-  const ai = new GoogleGenAI({ apiKey: API_KEY });
-  
-  chatSession = ai.chats.create({
-    model: 'gemini-3-flash-preview',
-    config: {
-      systemInstruction: SYSTEM_INSTRUCTION(userName),
+  // We use gemini-1.5-flash which is the standard, fast model.
+  chatSession = genAI.getGenerativeModel({
+    model: "gemini-1.5-flash",
+    systemInstruction: SYSTEM_INSTRUCTION(userName),
+  }).startChat({
+    generationConfig: {
       temperature: 0.7,
+      maxOutputTokens: 500,
     },
   });
 };
@@ -59,16 +57,17 @@ export const sendMessageToGemini = async (text: string): Promise<string> => {
   }
 
   try {
-    const response = await chatSession.sendMessage({ message: text });
-    return response.text || "I'm listening...";
+    const result = await chatSession.sendMessage(text);
+    const response = await result.response;
+    return response.text() || "I'm listening...";
   } catch (error) {
-    console.error("Gemini API Error:", error);
+    console.error("Gemini API Error Detail:", error);
     return "I'm having trouble connecting right now. Let's pause for a moment.";
   }
 };
 
 export const generateCoachingSummary = async (messages: Message[]): Promise<string> => {
-  const ai = new GoogleGenAI({ apiKey: API_KEY });
+  const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
   
   const conversationText = messages
     .map(m => `${m.role.toUpperCase()}: ${m.text}`)
@@ -76,36 +75,18 @@ export const generateCoachingSummary = async (messages: Message[]): Promise<stri
 
   const prompt = `
     Analyze the following coaching conversation.
-
     TRANSCRIPT:
     ${conversationText}
 
-    **CRITICAL CHECK:**
-    Did the User explicitly verbally confirm specific, concrete action steps they will take? 
-    (Inferred steps do not count. The user must have said "I will do X" or agreed to it).
-
-    **IF NO CONFIRMED STEPS EXIST:**
-    Return EXACTLY this string prefix followed by a question to the user:
-    "[RESUME_SESSION] It seems we haven't firmly nailed down your next steps yet. [Insert a question here asking the user to define what they will do next]"
-
-    **IF CONFIRMED STEPS EXIST:**
-    Return a summary in this format:
-    
-    **Your Agreed Action Plan:**
-    1. [Action Step 1]
-    2. [Action Step 2]
-    ...
-
-    **Coach's Feedback:**
-    [Brief, warm feedback on why these steps are good or how to ensure they happen]
+    Did the User explicitly verbally confirm specific, concrete action steps? 
+    IF NO: Return "[RESUME_SESSION] It seems we haven't firmly nailed down your next steps yet. [Ask a question]"
+    IF YES: Return a summary with "Your Agreed Action Plan" and "Coach's Feedback".
   `;
 
   try {
-    const result = await ai.models.generateContent({
-      model: 'gemini-3-flash-preview', 
-      contents: prompt 
-    });
-    return result.text || "Unable to generate summary.";
+    const result = await model.generateContent(prompt);
+    const response = await result.response;
+    return response.text() || "Unable to generate summary.";
   } catch (error) {
     console.error("Summary Generation Error:", error);
     return "I could not generate the summary at this time.";
