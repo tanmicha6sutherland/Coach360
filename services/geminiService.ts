@@ -28,7 +28,7 @@ Help ${userName} realize the solution and commit to concrete actions.
 let chatSession: Chat | null = null;
 
 export const initializeChat = (userName: string): void => {
-  // Access API_KEY here to prevent crash on module load if process is undefined
+  // Use process.env.API_KEY directly as per @google/genai guidelines.
   const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
   
   chatSession = ai.chats.create({

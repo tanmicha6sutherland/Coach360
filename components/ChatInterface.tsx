@@ -264,14 +264,13 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ userName, onReset 
 
             {/* Troubleshooting Dropdown */}
             <details className="text-xs text-gray-500 cursor-pointer group/troubleshoot">
-              <summary className="hover:text-red-600 transition-colors font-medium text-red-500">Troubleshooting: App not loading or White Screen?</summary>
+              <summary className="hover:text-red-600 transition-colors font-medium text-red-500">Troubleshooting: White Screen / Not Loading</summary>
               <div className="mt-2 bg-red-50 p-4 rounded-md border border-red-200 text-gray-700 space-y-2">
-                <p className="font-bold text-red-800">Deployment Checklist:</p>
+                <p className="font-bold text-red-800">Deployment Steps (Must do!):</p>
                 <ul className="list-disc list-inside space-y-1 ml-1">
-                  <li><strong>Build Process:</strong> Since this is a React/TypeScript app, you must use a build tool (like Vite or Parcel) when deploying to Netlify. You cannot just upload the raw files.</li>
-                  <li><strong>Environment Variables:</strong> This app requires a Gemeni API Key. On Netlify, go to <em>Site Configuration &gt; Environment Variables</em> and add a variable named <code>API_KEY</code> with your key value.</li>
-                  <li><strong>Process Error:</strong> If you see "process is not defined" in the browser console (F12), your build tool is not polyfilling the environment variable. Ensure your bundler is configured to expose <code>process.env.API_KEY</code> or <code>API_KEY</code> to the browser.</li>
-                  <li><strong>Rise 360 Embed:</strong> If the app works here but is blank in Rise, ensure this site is served over <strong>HTTPS</strong> and your browser isn't blocking 3rd party cookies/iframes.</li>
+                  <li><strong>Environment Variable Name:</strong> Ensure your environment variable is named <code>API_KEY</code>.</li>
+                  <li><strong>Build Command:</strong> Ensure Netlify is running <code>npm run build</code> and the publish directory is <code>dist</code>. (This happens automatically with the provided package.json).</li>
+                  <li><strong>Trigger Re-deploy:</strong> After changing environment variables, you must go to "Deploys" and "Trigger Deploy" -> "Deploy Site" for changes to take effect.</li>
                 </ul>
               </div>
             </details>
