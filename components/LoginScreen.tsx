@@ -97,9 +97,27 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onJoin }) => {
         </div>
       </div>
       
-      <p className="text-center text-gray-400 text-xs mt-6 max-w-md relative z-10 font-medium">
-        CoachSim 360 &copy; 2024. AI-Powered Leadership Training.
-      </p>
+      {/* Footer Area with Debugger */}
+      <div className="flex flex-col items-center gap-4 mt-6 relative z-10 w-full max-w-lg">
+        <p className="text-center text-gray-400 text-xs font-medium">
+          CoachSim 360 &copy; 2024. AI-Powered Leadership Training.
+        </p>
+
+        <details className="w-full text-center group/debug">
+          <summary className="text-[10px] text-gray-400 cursor-pointer hover:text-red-500 transition-colors list-none select-none">
+             [ Debug: Show API Key ]
+          </summary>
+          <div className="mt-2 p-3 bg-gray-900 rounded-md border border-gray-700 text-left shadow-lg">
+            <p className="text-[10px] text-gray-400 mb-1">Current process.env.API_KEY:</p>
+            <code className="block font-mono text-xs text-green-400 break-all bg-black/50 p-2 rounded">
+              {process.env.API_KEY ? process.env.API_KEY : "⚠️ UNDEFINED"}
+            </code>
+            <p className="text-[10px] text-gray-500 mt-2 italic">
+              Note: If this reads "UNDEFINED", check Netlify Site Settings {'>'} Environment Variables {'>'} API_KEY.
+            </p>
+          </div>
+        </details>
+      </div>
     </div>
   );
 };
