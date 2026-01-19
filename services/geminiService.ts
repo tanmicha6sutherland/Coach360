@@ -26,10 +26,10 @@ Help ${userName} realize the solution and commit to concrete actions.
 `;
 
 let chatSession: Chat | null = null;
-const apiKey = process.env.API_KEY;
 
 export const initializeChat = (userName: string): void => {
-  const ai = new GoogleGenAI({ apiKey });
+  // Access API_KEY here to prevent crash on module load if process is undefined
+  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
   
   chatSession = ai.chats.create({
     model: 'gemini-3-flash-preview',
@@ -55,7 +55,7 @@ export const sendMessageToGemini = async (text: string): Promise<string> => {
 };
 
 export const generateCoachingSummary = async (messages: Message[]): Promise<string> => {
-  const ai = new GoogleGenAI({ apiKey });
+  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
   
   // Convert chat history to a simple string
   const conversationText = messages

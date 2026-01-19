@@ -264,13 +264,14 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ userName, onReset 
 
             {/* Troubleshooting Dropdown */}
             <details className="text-xs text-gray-500 cursor-pointer group/troubleshoot">
-              <summary className="hover:text-red-600 transition-colors font-medium text-red-500">Troubleshooting: Embed showing white screen?</summary>
+              <summary className="hover:text-red-600 transition-colors font-medium text-red-500">Troubleshooting: App not loading or White Screen?</summary>
               <div className="mt-2 bg-red-50 p-4 rounded-md border border-red-200 text-gray-700 space-y-2">
-                <p className="font-bold text-red-800">Why is the screen blank in Rise 360?</p>
+                <p className="font-bold text-red-800">Deployment Checklist:</p>
                 <ul className="list-disc list-inside space-y-1 ml-1">
-                  <li><strong>Hosting URL:</strong> The code snippet above dynamically uses the current URL. If you are copying this from a local test environment (like <code>localhost:3000</code>), it will <strong>not</strong> work in Rise 360. You must deploy this app to a public server (like Vercel, Netlify, or Firebase) first.</li>
-                  <li><strong>HTTPS Required:</strong> Rise 360 runs on HTTPS. Your app must also be hosted on HTTPS. Mixed content (HTTP app in HTTPS Rise) will be blocked by the browser.</li>
-                  <li><strong>How to fix:</strong> Deploy this app, visit the <em>public live URL</em>, then copy the embed code from there.</li>
+                  <li><strong>Build Process:</strong> Since this is a React/TypeScript app, you must use a build tool (like Vite or Parcel) when deploying to Netlify. You cannot just upload the raw files.</li>
+                  <li><strong>Environment Variables:</strong> This app requires a Gemeni API Key. On Netlify, go to <em>Site Configuration &gt; Environment Variables</em> and add a variable named <code>API_KEY</code> with your key value.</li>
+                  <li><strong>Process Error:</strong> If you see "process is not defined" in the browser console (F12), your build tool is not polyfilling the environment variable. Ensure your bundler is configured to expose <code>process.env.API_KEY</code> or <code>API_KEY</code> to the browser.</li>
+                  <li><strong>Rise 360 Embed:</strong> If the app works here but is blank in Rise, ensure this site is served over <strong>HTTPS</strong> and your browser isn't blocking 3rd party cookies/iframes.</li>
                 </ul>
               </div>
             </details>
