@@ -27,6 +27,12 @@ Help ${userName} realize the solution and commit to concrete actions.
 
 // This grabs the key you saved in your Netlify Environment Variables
 const API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
+console.log("Checking API Key...");
+if (!API_KEY) {
+  console.error("DEBUG: The VITE_GEMINI_API_KEY is currently UNDEFINED.");
+} else {
+  console.log("DEBUG: API Key was found and loaded.");
+}
 
 let chatSession: Chat | null = null;
 
